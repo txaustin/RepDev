@@ -1,8 +1,12 @@
 *.class
 
-
+#ignore repdev generated files
+*.conf
 #ignore thumbnails created by windows
 Thumbs.db
+#ignore vim generated files
+*~
+*.swp
 #Ignore files build by Visual Studio
 *.obj
 *.exe
