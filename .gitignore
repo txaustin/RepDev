@@ -2,6 +2,7 @@
 
 #ignore repdev generated files
 *.conf
+backup/*
 #ignore thumbnails created by windows
 Thumbs.db
 #ignore vim generated files
