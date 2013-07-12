@@ -47,6 +47,8 @@ public class FileDialogOpen {
 	ArrayList<SymitarFile> files = new ArrayList<SymitarFile>();
 	Table table;
 	Combo typeCombo;
+	Button wildcardButton;
+	Button capsButton;
 	Text nameText;
 	String dir;
 	enum TABLE_COLUMN{NAME, SIZE, DATE};
@@ -83,7 +85,15 @@ public class FileDialogOpen {
 
 		Label nameLabel = new Label(shell, SWT.NONE);
 		nameLabel.setText("Filename:");
+		
+		wildcardButton = new Button(shell, SWT.CHECK);
+		wildcardButton.setText("Wildcard Search");
+		wildcardButton.setSelection(true);
 
+		capsButton = new Button(shell, SWT.CHECK);
+		capsButton.setText("Capitalize Search");
+		capsButton.setSelection(true);
+		
 		Label typeLabel = new Label(shell, SWT.NONE);
 		typeLabel.setText("Type:");
 
@@ -199,6 +209,16 @@ public class FileDialogOpen {
 		data.right = new FormAttachment(typeLabel);
 		data.top = new FormAttachment(0);
 		nameText.setLayoutData(data);
+		
+		data = new FormData();
+		data.top = new FormAttachment(nameLabel, 8);
+		data.right = new FormAttachment(100);
+		capsButton.setLayoutData(data);
+
+		data = new FormData();
+		data.top = new FormAttachment(nameLabel, 8);
+		data.right = new FormAttachment(capsButton);
+		wildcardButton.setLayoutData(data);
 
 		data = new FormData();
 		data.right = new FormAttachment(typeCombo);
@@ -213,7 +233,7 @@ public class FileDialogOpen {
 
 		data = new FormData();
 		data.left = new FormAttachment(0);
-		data.top = new FormAttachment(typeCombo);
+		data.top = new FormAttachment(wildcardButton);
 		data.bottom = new FormAttachment(cancel);
 		data.right = new FormAttachment(100);
 		table.setLayoutData(data);
@@ -247,12 +267,23 @@ public class FileDialogOpen {
 		shell.setCursor(shell.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 		
 		try{
+
+			String text = nameText.getText();
+			
+			if (capsButton.getSelection()) {
+				text = text.toUpperCase();
+				nameText.setText(text);
+			}
+			if (wildcardButton.getSelection())
+				text = "+" + text + "+";
+
+
 			if( dir == null ){
 				SymitarSession session = RepDevMain.SYMITAR_SESSIONS.get(sym);
-				fileList = session.getFileList(FileType.valueOf(typeCombo.getText()), nameText.getText());
+				fileList = session.getFileList(FileType.valueOf(typeCombo.getText()), text);
 			}
 			else{
-				fileList = Util.getFileList(dir, nameText.getText());
+				fileList = Util.getFileList(dir, text);
 			}
 			
 			// If the table sort column and direction has not been set, set them to default.
