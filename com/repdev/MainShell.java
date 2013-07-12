@@ -726,12 +726,12 @@ public class MainShell {
 
 		Project proj = (Project) cur.getData();
 
-		FileDialog dialog;
+		FileDialogOpen dialog;
 
 		if (isCurrentItemLocal())
-			dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeDir());
+			dialog = new FileDialogOpen(shell, getCurrentTreeDir());
 		else
-			dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeSym());
+			dialog = new FileDialogOpen(shell, getCurrentTreeSym());
 
 		ArrayList<SymitarFile> files = dialog.open();
 
@@ -1978,12 +1978,12 @@ public class MainShell {
 
 	public void showFileOpenMenu(){
 		//For current dir/sym
-		FileDialog dialog;
+		FileDialogOpen dialog;
 
 		if (isCurrentItemLocal())
-			dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeDir());
+			dialog = new FileDialogOpen(shell, getCurrentTreeDir());
 		else
-			dialog = new FileDialog(shell, FileDialog.Mode.OPEN, getCurrentTreeSym());
+			dialog = new FileDialogOpen(shell, getCurrentTreeSym());
 
 		for (SymitarFile file : dialog.open())
 			openFile(file);
