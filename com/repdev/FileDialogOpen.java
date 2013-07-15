@@ -80,7 +80,7 @@ public class FileDialogOpen {
 		shell = new Shell(parent, SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM | SWT.RESIZE);
 		shell.setText("Open Symitar File(s)");
 		shell.setLayout(layout);
-		shell.setMinimumSize(600, 350);
+		shell.setMinimumSize(600, 650);
 		shell.setImage(RepDevMain.smallFileOpenImage);
 
 		Label nameLabel = new Label(shell, SWT.NONE);
