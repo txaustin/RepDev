@@ -1225,12 +1225,17 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			gotoSection(selString);
 			return;
 		}
-		for( String key : incTokenCache.keySet()){
-			for(Token token : incTokenCache.get(key)){
-				if(matchTokenAndGoto(token, key, selString))
-					return;
+		
+		// Synchronize to prevent HashMap insertion after iterator creation (ConcurrentModificationException)
+		synchronized(incTokenCache) {
+			for (String key : incTokenCache.keySet()) {
+				for (Token token : incTokenCache.get(key)) {
+					if (matchTokenAndGoto(token, key, selString))
+						return;
+				}
 			}
 		}
+
 		for(Variable var : parser.getLvars()){
 			if(matchVarAndGoto(var, selString))
 				return;
@@ -1302,7 +1307,7 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 			i = 1;
 		}
 				
-		if(token.getTokenType() != null &&
+		if(token.getTokenType() != null && token.getBefore() != null &&
 			(token.getTokenType().equals(TokenType.PROCEDURE) || 
 				token.getTokenType().equals(TokenType.DEFINED_VARIABLE)) &&
 			token.getStr().equalsIgnoreCase(nameToMAtch)){
@@ -1315,22 +1320,23 @@ public class EditorComposite extends Composite implements TabTextEditorView {
 
 			if (o instanceof EditorComposite)
 				editor = (EditorComposite) o;
-//			if (token.getStart() >= 0 && editor != null) {
-//				editor.getStyledText().setTopIndex(Math.max(0, task.getLine() - 10));
-				try {
-					StyledText newTxt = editor.getStyledText();
-					newTxt.setCaretOffset(newTxt.getText().length());
-					newTxt.showSelection();
-					newTxt.setCaretOffset(token.getBefore().getStart());
-					editor.handleCaretChange();
-					// Drop Navigation Position
-					RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
-					newTxt.showSelection();
-					editor.lineHighlight();
-				} catch (IllegalArgumentException ex) {
-					// Just ignore it
-				}
-				editor.getStyledText().setFocus();
+			// if (token.getStart() >= 0 && editor != null) {
+			// editor.getStyledText().setTopIndex(Math.max(0, task.getLine() -
+			// 10));
+			try {
+				StyledText newTxt = editor.getStyledText();
+				newTxt.setCaretOffset(newTxt.getText().length());
+				newTxt.showSelection();
+				newTxt.setCaretOffset(token.getBefore().getStart());
+				editor.handleCaretChange();
+				// Drop Navigation Position
+				RepDevMain.mainShell.addToNavHistory(file, txt.getLineAtOffset(txt.getCaretOffset()));
+				newTxt.showSelection();
+				editor.lineHighlight();
+			} catch (IllegalArgumentException ex) {
+				// Just ignore it
+			}
+			editor.getStyledText().setFocus();
 			return true;
 		}
 		return false;
